@@ -2,25 +2,28 @@ name: AI IDE Build
 on:
   repository_dispatch:
     types: [build_apk]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.13.0'
-      - name: Create App
+
+      - name: Build Start
         run: |
-          rm -rf *
           flutter create --project-name=mreizaw_factory --offline .
           echo "${{ github.event.client_payload.code }}" > lib/main.dart
-      - name: Build APK
-        run: flutter build apk --release
-      - name: Upload Artifact
+          flutter build apk --release
+
+      - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: AI-App
           path: build/app/outputs/flutter-apk/app-release.apk
+
