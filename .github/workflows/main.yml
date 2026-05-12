@@ -2,28 +2,25 @@ name: AI IDE Build
 on:
   repository_dispatch:
     types: [build_apk]
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.13.0'
-      
-      - name: Create Structure
+      - name: Create App
         run: |
-          # လက်ရှိ ရှိတာတွေ အကုန်ဖျက်ပြီး Project အသစ်ပြန်တည်ဆောက်မယ်
           rm -rf *
           flutter create --project-name=mreizaw_factory --offline .
           echo "${{ github.event.client_payload.code }}" > lib/main.dart
-
       - name: Build APK
         run: flutter build apk --release
-
-      - name: Upload
+      - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: AI-App-Release
+          name: AI-App
           path: build/app/outputs/flutter-apk/app-release.apk
